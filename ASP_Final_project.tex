@@ -1,0 +1,221 @@
+\documentclass[11pt]{article}
+\usepackage{./reportNTU}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+
+\pagestyle{fancyplain}
+
+ 
+\rhead{\sffamily 1/1/2024}
+\lhead{\sffamily Final}
+\chead{{\sffamily ASP Fall,2023}}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+
+
+\setlength\parskip{1ex}
+
+\title{ASP Final Project}
+\author{YAO-MING CHEN}
+\date{Student ID:R12942136}
+\begin{document}
+\maketitle
+
+\thispagestyle{fancyplain}
+\renewcommand{\footrulewidth}{0.4pt}
+%\thispagestyle{plain}
+
+%Question 1
+\begin{mdframed}[backgroundcolor=lightshadecolor, linewidth=0pt, innertopmargin=12pt, innerbottommargin=12pt]
+{\bf Question 1.}:What are the details of these beamformers? Please describe the details using
+mathematical equations and proper explanations. Also define all the notations properly.\newline
+1.The beamformer with uniform weights\newline
+2.The beamformer with array steering\newline
+3.The MVDR beamformer\newline
+4.The LCMV beamformer
+\end{mdframed}
+Ans.\newline
+Suppose that $\textbf{x}(t)$ is our array data model, and the beamformer outcome $y(t) = \textbf{w}^H\textbf{x}(t)$\newline
+1. Uniform weights mean that the weights are 1/N, where N is the number of antennas on our ULA model.\newline
+Note that this beamforming is base on the assumption of DOA is 0 degree.\newline
+Now, we can write the outcome as follow:
+$$y(t) = (\textbf{w}^H \textbf{a}(\theta)) s_1(t) + \textbf{w}^H \textbf{n}(t)$$
+Then we can derive the SNR as below:
+$$SNR = |B_\theta(\theta)|^2 \frac{N\sigma_1^2}{\sigma_n^2}$$
+where $|B_\theta(\theta)|^2 = \textbf{w}^H \textbf{a}(\theta)$\newline
+We can clearly see that the value of SNR is highly relevant to $|B_\theta(\theta)|$ and N.\newline
+2. Derived from the model of ULA, the waveforms received at elements can be expressed as:
+$$\begin{bmatrix} s_0(t) \\ s_1(t) \\ \vdots \\ s_{(N-1)(t)}\end{bmatrix} = 
+s_O(t) \begin{bmatrix} e^{j2\pi(\frac{d_0}{\lambda})sin\theta} \\ e^{j2\pi(\frac{d_1}{\lambda})sin\theta} \\ \vdots \\  e^{j2\pi(\frac{d_{N-1}}{\lambda})sin\theta} \end{bmatrix} = \textbf{a}(\theta) s_O(t)$$
+where $\theta$ is the transmission direction, $\lambda$ is the wavelength of our carrier and $d_i, i = 1 \sim N-1$ is the distance between the first antenna and the $i_{th}$ antenna.\newline
+Note that $\textbf{a}(\theta)$ is called the sheering vector.\newline
+Combined with the Uniform Beamforming, we can choose the weight vector as:
+$$\textbf{w} = \frac{1}{N} \textbf{a}(\theta)$$
+
+
+\noindent3. MVDR(Minimum Variance Distortionless Response) Beamforming initially aim to solve the following optimization problem:
+
+\begin{equation*}
+\begin{aligned}
+&\underset{w}{min} && \mathbb{E}[|\textbf{w}^H \textbf{n}(t)|^2] \\ &sub. &&\textbf{w}^H \textbf{a}(\theta_s) = 1
+\end{aligned}
+\end{equation*}
+
+Since $\mathbb{E}[\textbf{n}(t)^H \textbf{n}(t)]$ is unavailable, by adding some constraints we can rewrite the problem into following format:
+
+\begin{equation*}
+\begin{aligned}
+&\underset{w}{min} && \mathbb{E}[|y(t)|^2] \\ &sub. &&\textbf{w}^H \textbf{a}(\theta_s) = 1 \\ &&& y(t) = \textbf{w}^H \textbf{x}(t) \\ &&&\mathbb{E}[\textbf{n}(t) s_1^*(t)] = \textbf{0}
+\end{aligned}
+\end{equation*}
+By solving this problem, we can write down the optimal solution:
+$$\textbf{w}_{MVDR}= \frac{\textbf{R}^{-1} \textbf{a}(\theta_s)}{\textbf{a}^H(\theta_s)\textbf{R}^{-1} \textbf{a}(\theta_s)}$$
+where $\textbf{R} = \mathbb{E}[\textbf{x}(t) \textbf{x}^H(t)]$\newline
+
+\noindent 4. LCMV(Linearly Constrained Minimum Variance) beamforming is a general version of MVDR beamforming.
+By changing constraint, we can write the optimization problem as follow:
+\begin{equation*}
+\begin{aligned}
+&\underset{w}{min} && \mathbb{E}[|y(t)|^2] \\ &sub. &&\textbf{C}^H \textbf{w} = \textbf{g} \\ &&& y(t) = \textbf{w}^H \textbf{x}(t) \\ &&&\mathbb{E}[\textbf{n}(t) s_1^*(t)] = \textbf{0}
+\end{aligned}
+\end{equation*}
+Note that when $\textbf{C} = \textbf{a}(\theta_s)$ and $\textbf{g} = \textbf{1}$, LCMV is equivalent to MVDR.
+By solving this problem, we can write down the optimal solution:
+$$\textbf{w}_{LCMV}= \textbf{R}^{-1} \textbf{C} (\textbf{C}^{H} \textbf{R}^{-1} \textbf{C})^{-1} \textbf{g}$$
+where $\textbf{R} = \mathbb{E}[\textbf{x}(t) \textbf{x}^H(t)]$\newline
+
+%Question 2
+\begin{mdframed}[backgroundcolor=lightshadecolor, linewidth=0pt, innertopmargin=12pt, innerbottommargin=12pt]
+{\bf Question 2.}:Design a filter to denoise $\Tilde{\theta}_s(t)$ and $\Tilde{\theta}_i(t)$. The denoised results are denoted by $\hat{\theta}_s(t)$ and $\hat{\theta}_i(t)$.\newline
+1. Describe the details of your filter using mathematical equations.\newline
+2. Summarize the steps of your filter similar to that in Page 39 of 10 LS RLS.pdf.\newline
+3. What are the advantages of your filter?
+\end{mdframed}
+Ans.\newline
+In this Item, I will use Hilber-Huang transform to filter out the noise.\newline
+Hilber-Huang transform is a method that can decomposite the original signal into several sinusoid-like components and trends signal.\newline
+The procedure can be seem as follow:\newline
+Assume that y(t) is our noisy signal.\newline
+1. Find local peaks and connect them(usually using B-spline) as p(t).\newline
+2. Find local dips and connect them(usually using B-spline) as d(t).\newline
+3. Compute z(t) = (p(t) + d(t))/2.\newline
+4. Check if $\mathbb{E}[z(t)] \simeq 0$. If True, set y(t) as y(t) - z(t) and repeat Step1~4. If False, end procedure.\newline
+Note that in realization, we can set up a threshold $\lambda$, where $\lambda \simeq 0$,to fullfill the checking process in step4.\newline
+See the algorithm down below:
+
+\begin{algorithm}
+    \caption{Hilber-Huang transform}\label{alg:cap}
+    \begin{algorithmic}
+    \Require The noisy signal $x(t)$and the threshold $\emph{thr}$
+    \State $K \gets 1000$
+    \State $y(t) \gets x(t)$
+    \State $z(t) \gets \textbf{0}$
+    \For{i = 1,2,...,K}
+        \State $z(t) = \frac{e_{max}(t) + e_{min}(t)}{2}$ \Comment $e_{max}(t),e_{min}(t)$ stands for local peaks and dips of $y(t)$
+        \If{$|\mathbb{E}[z(t)]| < \emph{thr}$}
+            \State $y(t) = y(t) - z(t)$
+        \Else
+            \State break
+        \EndIf
+    \EndFor
+    \end{algorithmic}
+\end{algorithm}
+\noindent This method has the advantage of not using Fourier transform and matrix multiplication, which cost a very small amount of computations.\newline
+However, this method can only apply on a noisy signal which was corrupt by sinusoid-like noised with zeros means.
+
+%Question 3
+\begin{mdframed}[backgroundcolor=lightshadecolor, linewidth=0pt, innertopmargin=12pt, innerbottommargin=12pt]
+    {\bf Question 3.}:Plot the estimated DOAs $\hat{\theta}_s(t)$ and $\hat{\theta}_i(t)$ over the time index t, using your filter in Item 2.
+\end{mdframed}
+Ans.\newline
+The filtered result in $\textbf{Figure}\,1.$\newline
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm, height = 7cm]{ASP_Final_DOA.jpg} 
+    \caption{$\hat{\theta}_s(t)\; and\; \hat{\theta}_i(t)$}
+\end{figure}
+
+%Question 4
+\begin{mdframed}[backgroundcolor=lightshadecolor, linewidth=0pt, innertopmargin=12pt, innerbottommargin=12pt]
+    {\bf Question 4.}:Design a beamformer that extracts the source signal in (1). The extracted result is denoted by $\hat{s}(t)$
+\end{mdframed}
+Ans.\newline
+Before We start to design the beamformer, we can first take a look at the beamformers in Item 1 and discuss their pros and cons.\newline
+1. $\textbf{Uniform beamforming with array steering}$: this method can enhance the SNR at certain derection and attenuate the power of noise by N factor but it can't fully filter out the interference signal(namely $i(t)$ steered by $\theta_i(t)$ in this project). See the simulation result in $Figure\;2$ \newline
+2. $\textbf{MVDR}$: this method can extractd the original signal without distortion, but it can't filter out $i(t)$ and the attenuation of noise power is not guaranteed.See the simulation result in $Figure\;3$ \newline
+3. $\textbf{LCMV}$: this method can be seen as a more general version of MVDR, it can strongly filter out $i(t)$, but the attenuation of noise power is not guaranteed neither. See the simulation result in $Figure\;4$ \newline
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm, height = 5cm]{ASP_Final_Uni.jpg} 
+    \caption{$Uniform\;Beamforming with Array Steering$}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm, height = 5cm]{ASP_Final_MVDR.jpg} 
+    \caption{$MVDR$}
+\end{figure}
+\newpage
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm, height = 5cm]{ASP_Final_LCMV.jpg} 
+    \caption{$LCMV$}
+\end{figure}
+We can also compare the three simulation results as shown in $Figure\;5$\newline
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm, height = 5cm]{ASP_Final_Compare.jpg} 
+    \caption{$Comparsion$}
+\end{figure}
+From the above results, we can clearly see that the three simulations are actually pretty similar.\newline
+One of the interested things is that although the $\textbf{Uniform \;beamforming}$ can not fully filter out the interference term ($i(t)$), it's surprising that it seems like not affected by $i(t)$ very much (see the comparison result). However, the result from $\textbf{MVDR}$ and $\textbf{LCMV}$ seems to be affected by noise 
+strongly as we expected.\newline
+
+According to former discussion, I want to propose a simple method which can combined the advantages from $\textbf{Uniform beamforming}$ and $\textbf{LCMV}$ using the following procedure:\newline
+1. Compute the weight vector $w_{uni}(t)$ using $\textbf{Uniform beamforming}$.\newline
+2. Compute the weight vecotr $w_{LCMV}(t)$ using $\textbf{LCMV}$.\newline
+3. Set a constant value $\lambda$ where $\lambda \in [0,1]$.\newline
+4. Compute the weight vector $\hat{w}(t) = \lambda w_{uni}(t) + (1-\lambda)w_{LCMV}(t)$\newline
+5. Compute the hypothesis true signal $\hat{s}(t) = \hat{w}(t)^H x(t)$\newline
+Note that the more constant $\lambda$ close to 1, the more attenuation on noise power and the more constant $\lambda$ close to 0, the more attenuation on interference signal.\newline
+The algorithm of this proposed procedure:\newpage
+\begin{algorithm}
+    \caption{Beamforming combined with Uniform Beamforming and LCMV}\label{alg:cap}
+    \begin{algorithmic}
+    \Require received signal from ULA $\textbf{x}(t)$, $\hat{\theta}_s(t)$, $\hat{\theta}_i(t)$, constant $\lambda$
+    \State $R \gets \frac{1}{L} \sum_{i=1}^{L}\textbf{x}(i) \textbf{x}(i)^H$ \Comment L stands for number of measurement vector
+    \State $\textbf{w}_{uni}(t) \gets \textbf{0}_{N \times L}$  \Comment N stants for number of antennas
+    \State $\textbf{w}_{LCMV}(t) \gets \textbf{0}_{N \times L}$
+    \State $\hat{\textbf{w}}(t) \gets \textbf{0}_{N \times L}$
+    \State $\textbf{g} \gets [1, 0]^T$
+    \State $\hat{s}(t) \gets \textbf{0}_{1\times L}$
+    \For{k = 1,2,...,L}
+        \State $\textbf{a}_s = [1, e^{j\pi\sin{\hat{\theta}_s(k)}},\dots,e^{j\pi (N-1) \sin{\hat{\theta}_s(k)}}]^T$
+        \State $\textbf{a}_i = [1, e^{j\pi\sin{\hat{\theta}_i(k)}},\dots,e^{j\pi (N-1) \sin{\hat{\theta}_i(k)}}]^T$ 
+        \State $\textbf{C} = [\textbf{a}_s, \textbf{a}_i]$
+        \State $\textbf{w}_{uni}(i)_{N\times 1} = \frac{1}{N} \textbf{a}_s$
+        \State $\textbf{w}_{LCMV}(i)_{N\times 1} = \textbf{R}^{-1} \textbf{C} (\textbf{C}^H \textbf{R}^{-1} \textbf{C})^{-1} \textbf{g}$
+        \State $\hat{\textbf{w}}(i)_{N\times 1} = \lambda \textbf{w}_{uni}(i) + (1 - \lambda) \textbf{w}_{LCMV}(i)$
+        \State $\hat{s}(i) = \hat{\textbf{w}}(i)^H \textbf{x}(i)_{N \times 1}$
+    \EndFor
+    \end{algorithmic}
+\end{algorithm}
+In the following simulation, I will set $\lambda = 0.8$ since the interference signal are relevantly less affected compared to noise in this project.\newline
+
+\begin{mdframed}[backgroundcolor=lightshadecolor, linewidth=0pt, innertopmargin=12pt, innerbottommargin=12pt]
+    {\bf Question 5.}:Plot the $\emph{real and imaginary parts}$ of estimated source signal $\hat{s}(t)$ over the time index t, using your beamformer in Item 4.
+\end{mdframed}
+Ans.\newline
+Result is shown in $Figure\;6$\newline
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=16cm, height = 8cm]{ASP_Final_hat.jpg} 
+    \caption{$\hat{s}(t)$}
+\end{figure}
+%\bibliographystyle{IEEEtran}
+%\bibliography{./Ref.bib}
+
+\end{document}

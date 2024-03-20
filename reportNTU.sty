@@ -1,0 +1,95 @@
+\usepackage[a4paper, hmargin=2cm, vmargin={2cm,1cm}, includehead, includefoot]{geometry}
+\usepackage{amsmath,amssymb,mathrsfs}
+\usepackage{amsthm}
+\usepackage{epsfig,epsf,subfigure,graphicx,graphics}
+\usepackage{url}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{empheq}
+\usepackage{bbm}
+\usepackage{color}
+\usepackage{float}
+\usepackage{framed}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{thmtools}
+\usepackage{mdframed}
+\usepackage{hyperref}
+\hypersetup{colorlinks,breaklinks,
+            linkcolor=[RGB]{0,0,205},
+            citecolor=[RGB]{34,139,34},
+            urlcolor=[RGB]{0,0,128}
+            }
+\definecolor{shadecolor}{gray}{0.85}
+\definecolor{lightshadecolor}{gray}{0.95}
+%\usepackage{enumitem}
+
+%\usepackage{ragged2e}
+
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{theorem}[lemma]{Theorem}
+%\newtheorem{proposition}[lemma]{Proposition}
+%\newtheorem{corollary}[lemma]{Corollary}
+%\newtheorem{definition}[lemma]{Definition}
+%\newtheorem{remark}[lemma]{Remark}
+%\newtheorem{claim}[lemma]{Claim}
+%\newtheorem{fact}[lemma]{Fact}
+%\newtheorem{example}[lemma]{Example}
+%\newtheorem{exercise}{Exercise}
+
+\newcounter{MYtempeqncnt}
+
+\usepackage{fancyhdr}
+%\setlength{\headheight}{14.49998pt}
+%\linespread{1.0}
+%\renewcommand{\footrulewidth}{0.4pt}
+%\setlength{\parskip}{1ex}
+%\setlength{\parindent}{1ex}
+
+\allowdisplaybreaks
+
+%\setlength\parindent{0pt}
+
+\setlist[enumerate]{topsep=1ex, itemsep=0.5ex, parsep=1ex, label=\alph*)}%leftmargin=*,
+\setlist[itemize]{topsep=1ex, itemsep=0.5ex, parsep=1ex}%leftmargin=*, 
+
+\makeatletter
+\newcommand*{\indep}{%
+  \mathbin{%
+    \mathpalette{\@indep}{}%
+  }%
+}
+\newcommand*{\nindep}{%
+  \mathbin{%                   % The final symbol is a binary math operator
+    \mathpalette{\@indep}{\not}% \mathpalette helps for the adaptation
+                               % of the symbol to the different math styles.
+  }%
+}
+\newcommand*{\@indep}[2]{%
+  % #1: math style
+  % #2: empty or \not
+  \sbox0{$#1\perp\m@th$}%        box 0 contains \perp symbol
+  \sbox2{$#1=$}%                 box 2 for the height of =
+  \sbox4{$#1\vcenter{}$}%        box 4 for the height of the math axis
+  \rlap{\copy0}%                 first \perp
+  \dimen@=\dimexpr\ht2-\ht4-.2pt\relax
+      % The equals symbol is centered around the math axis.
+      % The following equations are used to calculate the
+      % right shift of the second \perp:
+      % [1] ht(equals) - ht(math_axis) = line_width + 0.5 gap
+      % [2] right_shift(second_perp) = line_width + gap
+      % The line width is approximated by the default line width of 0.4pt
+  \kern\dimen@
+  {#2}%
+      % {\not} in case of \nindep;
+      % the braces convert the relational symbol \not to an ordinary
+      % math object without additional horizontal spacing.
+  \kern\dimen@
+  \copy0 %                       second \perp
+} 
+\makeatother
+
+
+% Assorted theorem/proof environments
+%\input{../theoremstylesheet.tex}
